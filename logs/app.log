@@ -1,0 +1,30 @@
+2026-03-11 17:37:52,786 WARNING passlib.handlers.bcrypt (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "D:\AutoExtractOCR\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2026-03-11 18:55:46,782 WARNING passlib.handlers.bcrypt (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "D:\AutoExtractOCR\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2026-03-28 09:12:53,847 WARNING passlib.handlers.bcrypt (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "D:\AutoExtractOCR\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2026-03-28 10:01:32,848 WARNING passlib.handlers.bcrypt (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "D:\AutoExtractOCR\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+2026-03-28 10:39:54,971 WARNING passlib.handlers.bcrypt (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "D:\AutoExtractOCR\.venv\Lib\site-packages\passlib\handlers\bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'

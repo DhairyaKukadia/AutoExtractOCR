@@ -3,14 +3,12 @@
 AutoExtractOCR is a Windows-first desktop prototype for medical-form OCR workflows.
 
 ## Features
-- Local authentication (Admin / Operator) with hashed passwords (passlib PBKDF2-SHA256)
+- Local authentication (Admin / Operator) with hashed passwords
 - OCR intake for PNG/JPG/JPEG/PDF
 - OpenCV preprocessing + Tesseract OCR baseline
-- Template-aware extraction strategy (generic + category/template patterns)
 - Editable extracted fields before save
-- Record details update workflow (review/edit/update after save)
 - SQLite storage via SQLAlchemy
-- Category-based record organization and search filters (patient, status, form type, date, record #)
+- Category-based record organization and search filters
 - Audit log tracking + file-based application logging
 - User management (create, activate/deactivate)
 
@@ -37,11 +35,6 @@ pip install -r requirements.txt
 ## Run
 ```bash
 python run.py
-```
-
-## Run tests
-```bash
-pytest -q
 ```
 
 ## Seeded users
