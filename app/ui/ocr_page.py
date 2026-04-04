@@ -15,7 +15,6 @@ from PySide6.QtWidgets import (
 )
 
 from app.config.constants import FORM_CATEGORIES, ReviewStatus
-from app.data.repositories.template_repository import TemplateRepository
 from app.services.audit_service import AuditService
 from app.services.extraction_service import ExtractionService
 from app.services.ocr_service import OCRService
@@ -32,7 +31,6 @@ class OCRPage(QWidget):
         self.extraction_service = ExtractionService()
         self.record_service = RecordService(session)
         self.audit_service = AuditService(session)
-        self.template_repo = TemplateRepository(session)
         self.file_path = ''
         self.has_ocr_result = False
         self.field_inputs: dict[str, QLineEdit] = {}
@@ -44,28 +42,18 @@ class OCRPage(QWidget):
         self.file_label = QLabel('No file selected')
         browse = QPushButton('Select File')
         browse.clicked.connect(self._select_file)
-
         self.category = QComboBox()
         self.category.addItems(FORM_CATEGORIES)
-        self.category.currentTextChanged.connect(self._refresh_templates)
-
-        self.template = QComboBox()
-        self._refresh_templates(self.category.currentText())
-
         self.status = QComboBox()
         self.status.addItems([s.value for s in ReviewStatus])
-
         run_btn = QPushButton('Run OCR')
         run_btn.clicked.connect(self._run_ocr)
         save_btn = QPushButton('Save Record')
         save_btn.clicked.connect(self._save)
-
         top.addWidget(self.file_label)
         top.addWidget(browse)
         top.addWidget(QLabel('Category'))
         top.addWidget(self.category)
-        top.addWidget(QLabel('Template'))
-        top.addWidget(self.template)
         top.addWidget(QLabel('Status'))
         top.addWidget(self.status)
         top.addWidget(run_btn)
@@ -82,13 +70,6 @@ class OCRPage(QWidget):
             self.field_inputs[key] = line
             self.form_layout.addRow(key.replace('_', ' ').title(), line)
         root.addLayout(self.form_layout)
-
-    def _refresh_templates(self, category: str):
-        self.template.clear()
-        self.template.addItem('')
-        templates = self.template_repo.list_active_by_category(category) if category else self.template_repo.list_active()
-        for tpl in templates:
-            self.template.addItem(tpl.template_name, tpl.id)
 
     def _select_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, 'Select form', '', 'Documents (*.png *.jpg *.jpeg *.pdf)')
@@ -117,9 +98,7 @@ class OCRPage(QWidget):
 
         self.has_ocr_result = True
         self.raw_text.setText(text)
-        template_name = self.template.currentText().strip()
-        form_category = self.category.currentText().strip()
-        for key, value in self.extraction_service.parse(text, template_name=template_name, form_category=form_category).items():
+        for key, value in self.extraction_service.parse(text).items():
             self.field_inputs[key].setText(value)
         self.status.setCurrentText(ReviewStatus.EXTRACTED.value)
         self.audit_service.log(user_id=self.current_user.id, action='ocr_execution', details=self.file_path)
@@ -134,8 +113,6 @@ class OCRPage(QWidget):
 
         status = self.status.currentText()
         extracted = {key: widget.text().strip() for key, widget in self.field_inputs.items()}
-        template_id = self.template.currentData()
-        reviewed_by = self.current_user.id if status in {ReviewStatus.REVIEWED.value, ReviewStatus.APPROVED.value} else None
         record = self.record_service.save_record(
             form_category=self.category.currentText(),
             source_file_name=Path(self.file_path).name,
@@ -144,8 +121,6 @@ class OCRPage(QWidget):
             extracted_fields=extracted,
             status=status,
             created_by=self.current_user.id,
-            template_id=template_id,
-            reviewed_by=reviewed_by,
         )
         self.audit_service.log(
             user_id=self.current_user.id,
