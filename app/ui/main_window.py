@@ -3,7 +3,6 @@ from PySide6.QtWidgets import QMainWindow, QTabWidget
 from app.config.constants import Role
 from app.services.audit_service import AuditService
 from app.ui.audit_logs_page import AuditLogsPage
-from app.ui.dashboard_page import DashboardPage
 from app.ui.ocr_page import OCRPage
 from app.ui.records_page import RecordsPage
 from app.ui.users_page import UsersPage
@@ -17,7 +16,6 @@ class MainWindow(QMainWindow):
         self.audit = AuditService(session)
         self.setWindowTitle(f'AutoExtractOCR - {current_user.full_name}')
         tabs = QTabWidget()
-        tabs.addTab(DashboardPage(session), 'Dashboard')
         tabs.addTab(OCRPage(session, current_user), 'OCR Intake')
         tabs.addTab(RecordsPage(session, current_user), 'Records')
         if current_user.role == Role.ADMIN:
