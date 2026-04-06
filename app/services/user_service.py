@@ -14,7 +14,7 @@ class UserService:
         required(password, 'Password')
         required(full_name, 'Full name')
         min_length(password, 8, 'Password')
-        if role not in {Role.ADMIN, Role.OPERATOR}:
+        if role not in {Role.ADMIN, Role.OPERATOR, Role.REVIEWER}:
             raise ValueError('Invalid role')
         if self.repo.get_by_username(username):
             raise ValueError('Username already exists')

@@ -30,7 +30,7 @@ class UsersPage(QWidget):
         self.password.setEchoMode(QLineEdit.EchoMode.Password)
         self.full_name = QLineEdit()
         self.role = QComboBox()
-        self.role.addItems([Role.ADMIN, Role.OPERATOR])
+        self.role.addItems([Role.ADMIN, Role.OPERATOR, Role.REVIEWER])
         form.addRow('Username', self.username)
         form.addRow('Password', self.password)
         form.addRow('Full name', self.full_name)
