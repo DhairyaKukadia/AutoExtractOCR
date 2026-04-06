@@ -24,6 +24,8 @@ from app.services.parser_service import ParserService
 from app.services.record_service import RecordService
 from app.utils.file_utils import is_supported_file
 
+FORM_CATEGORY_TO_TABLE = getattr(app_constants, "FORM_CATEGORY_TO_TABLE", {})
+
 
 class OCRPage(QWidget):
     def __init__(self, session, current_user):
