@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from PySide6.QtWidgets import (
     QComboBox,
     QFormLayout,
@@ -21,7 +19,6 @@ from app.ui.record_details_dialog import RecordDetailsDialog
 class RecordsPage(QWidget):
     def __init__(self, session, current_user):
         super().__init__()
-        self.session = session
         self.current_user = current_user
         self.repo = RecordRepository(session)
         self.audit = AuditService(session)
@@ -36,19 +33,11 @@ class RecordsPage(QWidget):
         self.status.addItems([s.value for s in ReviewStatus])
         self.patient_name = QLineEdit()
         self.patient_id = QLineEdit()
-        self.form_type = QLineEdit()
-        self.date_from = QLineEdit()
-        self.date_from.setPlaceholderText('YYYY-MM-DD')
-        self.date_to = QLineEdit()
-        self.date_to.setPlaceholderText('YYYY-MM-DD')
         self.record_number = QLineEdit()
         filters_form.addRow('Category', self.category)
         filters_form.addRow('Status', self.status)
         filters_form.addRow('Patient Name', self.patient_name)
         filters_form.addRow('Patient Identifier', self.patient_id)
-        filters_form.addRow('Form Type', self.form_type)
-        filters_form.addRow('Date From', self.date_from)
-        filters_form.addRow('Date To', self.date_to)
         filters_form.addRow('Record Number', self.record_number)
         layout.addLayout(filters_form)
 
@@ -75,9 +64,6 @@ class RecordsPage(QWidget):
         self.status.setCurrentIndex(0)
         self.patient_name.clear()
         self.patient_id.clear()
-        self.form_type.clear()
-        self.date_from.clear()
-        self.date_to.clear()
         self.record_number.clear()
         self.refresh()
 
@@ -87,9 +73,6 @@ class RecordsPage(QWidget):
             'status': self.status.currentText(),
             'patient_name': self.patient_name.text().strip(),
             'patient_identifier': self.patient_id.text().strip(),
-            'form_type': self.form_type.text().strip(),
-            'date_from': self._parse_date(self.date_from.text().strip(), end_of_day=False),
-            'date_to': self._parse_date(self.date_to.text().strip(), end_of_day=True),
             'record_number': self.record_number.text().strip(),
         }
         self.records = self.repo.list_records(**filters)
@@ -105,24 +88,9 @@ class RecordsPage(QWidget):
         if log_search:
             self.audit.log(user_id=self.current_user.id, action='record_search', details=str(filters))
 
-    @staticmethod
-    def _parse_date(raw: str, *, end_of_day: bool) -> datetime | None:
-        if not raw:
-            return None
-        try:
-            parsed = datetime.strptime(raw, '%Y-%m-%d')
-            return parsed.replace(hour=23, minute=59, second=59) if end_of_day else parsed
-        except ValueError:
-            return None
-
     def open_selected(self):
         row = self.table.currentRow()
         if row < 0:
             return
-        dialog = RecordDetailsDialog(
-            session=self.session,
-            current_user=self.current_user,
-            record=self.records[row],
-            on_saved=self.refresh,
-        )
+        dialog = RecordDetailsDialog(self.records[row])
         dialog.exec()
