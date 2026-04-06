@@ -1,4 +1,8 @@
-from enum import StrEnum
+from enum import Enum
+
+
+class StrEnum(str, Enum):
+    pass
 
 
 class Role(StrEnum):
@@ -15,13 +19,14 @@ class ReviewStatus(StrEnum):
 
 
 FORM_CATEGORIES = [
-    'Patient Registration',
-    'Prescription',
-    'Lab Request',
-    'Lab Report Intake',
-    'Insurance Form',
-    'Consent Form',
-    'Admission Form',
-    'Discharge Summary Intake',
-    'Other',
+    'Pathology / Haematology Request',
+    'Clinical Chemistry Requisition',
+    'Blood Request Form',
 ]
+
+
+FORM_CATEGORY_TO_TYPE = {
+    'Pathology / Haematology Request': 'pathology_hematology',
+    'Clinical Chemistry Requisition': 'clinical_chemistry',
+    'Blood Request Form': 'blood_request',
+}
