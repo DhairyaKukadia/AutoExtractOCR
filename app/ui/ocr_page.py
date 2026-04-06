@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from app.config.constants import FORM_CATEGORIES, ReviewStatus
+from app.config.constants import FORM_CATEGORIES, OCR_LAYOUT_FIELDS, ReviewStatus
 from app.services.audit_service import AuditService
 from app.services.extraction_service import ExtractionService
 from app.services.ocr_service import OCRService
@@ -65,7 +65,7 @@ class OCRPage(QWidget):
         root.addWidget(self.raw_text)
 
         self.form_layout = QFormLayout()
-        for key in ['patient_name', 'patient_identifier', 'form_type']:
+        for key in OCR_LAYOUT_FIELDS:
             line = QLineEdit()
             self.field_inputs[key] = line
             self.form_layout.addRow(key.replace('_', ' ').title(), line)
@@ -98,7 +98,7 @@ class OCRPage(QWidget):
 
         self.has_ocr_result = True
         self.raw_text.setText(text)
-        for key, value in self.extraction_service.parse(text).items():
+        for key, value in self.extraction_service.parse(text, template_name=self.category.currentText()).items():
             self.field_inputs[key].setText(value)
         self.status.setCurrentText(ReviewStatus.EXTRACTED.value)
         self.audit_service.log(user_id=self.current_user.id, action='ocr_execution', details=self.file_path)
