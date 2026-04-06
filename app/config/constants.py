@@ -8,6 +8,7 @@ class StrEnum(str, Enum):
 class Role(StrEnum):
     ADMIN = 'Admin'
     OPERATOR = 'Operator'
+    REVIEWER = 'Reviewer'
 
 
 class ReviewStatus(StrEnum):
