@@ -15,13 +15,29 @@ class ReviewStatus(StrEnum):
 
 
 FORM_CATEGORIES = [
-    'Patient Registration',
-    'Prescription',
-    'Lab Request',
-    'Lab Report Intake',
-    'Insurance Form',
-    'Consent Form',
-    'Admission Form',
-    'Discharge Summary Intake',
-    'Other',
+    'Pathology / Haematology Request',
+    'Clinical Chemistry Requisition',
+    'Blood Request Form',
+]
+
+
+FORM_CATEGORY_TO_TYPE = {
+    'Pathology / Haematology Request': 'pathology_hematology',
+    'Clinical Chemistry Requisition': 'clinical_chemistry',
+    'Blood Request Form': 'blood_request',
+}
+
+
+OCR_LAYOUT_FIELDS = [
+    'patient_name',
+    'age_sex',
+    'registration_no',
+    'mrd_no',
+    'bbr_no',
+    'ward_unit',
+    'doctor_name',
+    'doctor_contact_no',
+    'sample_or_specimen_type',
+    'form_type',
+    'patient_identifier',
 ]
