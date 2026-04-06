@@ -1,4 +1,8 @@
-from enum import StrEnum
+from enum import Enum
+
+
+class StrEnum(str, Enum):
+    pass
 
 
 class Role(StrEnum):
@@ -41,3 +45,10 @@ OCR_LAYOUT_FIELDS = [
     'form_type',
     'patient_identifier',
 ]
+
+
+FORM_CATEGORY_TO_TYPE = {
+    'Pathology / Haematology Request': 'pathology_hematology',
+    'Clinical Chemistry Requisition': 'clinical_chemistry',
+    'Blood Request Form': 'blood_request',
+}

@@ -1,5 +1,7 @@
 import re
 
+from app.config.constants import FORM_CATEGORY_TO_TYPE
+
 
 class ExtractionService:
     def parse(self, text: str, template_name: str | None = None) -> dict[str, str]:
