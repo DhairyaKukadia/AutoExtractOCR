@@ -4,20 +4,6 @@ from app.config.constants import FORM_CATEGORY_TO_TYPE
 
 
 class ExtractionService:
-    FIELD_ORDER = [
-        'patient_name',
-        'age_sex',
-        'registration_no',
-        'mrd_no',
-        'bbr_no',
-        'ward_unit',
-        'doctor_name',
-        'doctor_contact_no',
-        'sample_or_specimen_type',
-        'form_type',
-        'patient_identifier',
-    ]
-
     def parse(self, text: str, template_name: str | None = None) -> dict[str, str]:
         extracted = {
             'patient_name': self._extract(text, [r"Patient(?:'s)?\s*Name\s*[:\-]\s*(.+)", r'PATIENT\s*NAME\s*[:\-]\s*(.+)']),
@@ -46,9 +32,7 @@ class ExtractionService:
         if explicit:
             return explicit
         if template_name:
-            normalized = FORM_CATEGORY_TO_TYPE.get(template_name)
-            if normalized:
-                return normalized
+            return template_name
 
         upper = text.upper()
         if 'CLINICAL PATHOLOGY' in upper or 'HAEMATOLOGY' in upper:
