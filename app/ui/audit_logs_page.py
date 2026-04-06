@@ -1,4 +1,17 @@
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
+from datetime import datetime, time
+
+from PySide6.QtCore import QDate
+from PySide6.QtWidgets import (
+    QDateEdit,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
 
 from app.data.repositories.audit_repository import AuditRepository
 
@@ -8,13 +21,40 @@ class AuditLogsPage(QWidget):
         super().__init__()
         self.repo = AuditRepository(session)
         layout = QVBoxLayout(self)
+
+        filters = QHBoxLayout()
+        self.user_id = QLineEdit()
+        self.user_id.setPlaceholderText('User ID')
+        self.action = QLineEdit()
+        self.action.setPlaceholderText('Action')
+        self.date_from = QDateEdit(QDate.currentDate().addDays(-7))
+        self.date_from.setCalendarPopup(True)
+        self.date_to = QDateEdit(QDate.currentDate())
+        self.date_to.setCalendarPopup(True)
+        apply_btn = QPushButton('Apply Filters')
+        apply_btn.clicked.connect(self.refresh)
+        filters.addWidget(QLabel('User'))
+        filters.addWidget(self.user_id)
+        filters.addWidget(QLabel('Action'))
+        filters.addWidget(self.action)
+        filters.addWidget(QLabel('From'))
+        filters.addWidget(self.date_from)
+        filters.addWidget(QLabel('To'))
+        filters.addWidget(self.date_to)
+        filters.addWidget(apply_btn)
+        layout.addLayout(filters)
+
         self.table = QTableWidget(0, 6)
         self.table.setHorizontalHeaderLabels(['Time', 'User ID', 'Action', 'Status', 'Entity', 'Details'])
         layout.addWidget(self.table)
         self.refresh()
 
     def refresh(self):
-        logs = self.repo.list_recent(300)
+        uid = int(self.user_id.text()) if self.user_id.text().strip().isdigit() else None
+        action = self.action.text().strip()
+        date_from = datetime.combine(self.date_from.date().toPython(), time.min)
+        date_to = datetime.combine(self.date_to.date().toPython(), time.max)
+        logs = self.repo.list_recent(300, user_id=uid, action=action, date_from=date_from, date_to=date_to)
         self.table.setRowCount(len(logs))
         for row, log in enumerate(logs):
             self.table.setItem(row, 0, QTableWidgetItem(str(log.timestamp)))
