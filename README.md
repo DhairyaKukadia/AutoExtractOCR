@@ -3,6 +3,8 @@
 AutoExtractOCR is a Windows-first desktop prototype for medical-form OCR workflows.
 
 ## Features
+
+
 - Local authentication (Admin / Operator) with hashed passwords
 - OCR intake for PNG/JPG/JPEG/PDF
 - OpenCV preprocessing + Tesseract OCR baseline
