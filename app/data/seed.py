@@ -26,6 +26,15 @@ def seed_data(session) -> None:
             is_active=True,
         )
 
+    if not user_repo.get_by_username('reviewer'):
+        user_repo.create(
+            username='reviewer',
+            password_hash=auth.hash_password('Reviewer@123'),
+            full_name='Default Reviewer',
+            role=Role.REVIEWER,
+            is_active=True,
+        )
+
     if not session.query(FormTemplate).first():
         for category in FORM_CATEGORIES:
             session.add(
