@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.data import form_models, models  # noqa: F401
 from app.data.database import Base
 
 

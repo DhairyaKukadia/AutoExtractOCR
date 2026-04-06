@@ -4,8 +4,7 @@ from passlib.context import CryptContext
 
 from app.data.repositories.user_repository import UserRepository
 
-# Use pbkdf2_sha256 to avoid bcrypt backend compatibility issues across platforms.
-pwd_context = CryptContext(schemes=['pbkdf2_sha256'], deprecated='auto')
+pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
 
 class AuthService:
