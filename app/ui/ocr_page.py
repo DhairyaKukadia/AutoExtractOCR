@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from app.config.constants import FORM_CATEGORIES, ReviewStatus
+from app.config.constants import FORM_CATEGORIES, OCR_LAYOUT_FIELDS, ReviewStatus
 from app.services.audit_service import AuditService
 from app.services.extraction_service import ExtractionService
 from app.services.ocr_service import OCRService
@@ -65,7 +65,7 @@ class OCRPage(QWidget):
         root.addWidget(self.raw_text)
 
         self.form_layout = QFormLayout()
-        for key in self.extraction_service.FIELD_ORDER:
+        for key in OCR_LAYOUT_FIELDS:
             line = QLineEdit()
             self.field_inputs[key] = line
             self.form_layout.addRow(key.replace('_', ' ').title(), line)
