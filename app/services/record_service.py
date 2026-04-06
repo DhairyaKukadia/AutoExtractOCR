@@ -25,6 +25,7 @@ class RecordService:
         extracted_fields: dict[str, str],
         status: str,
         created_by: int,
+        reviewed_by: int | None = None,
     ) -> MedicalRecord:
         if form_category not in FORM_CATEGORY_TO_TABLE:
             raise ValueError('Invalid form category for strict pipeline')
@@ -50,6 +51,7 @@ class RecordService:
             extracted_json=json.dumps(extracted_fields),
             review_status=status,
             created_by=created_by,
+            reviewed_by=reviewed_by,
         )
         fields = [
             ExtractedField(
