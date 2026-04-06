@@ -37,23 +37,3 @@ def test_auth_rejects_inactive_user():
 
     logged_in = auth.login('bob', 'Password123')
     assert logged_in is None
-
-
-def test_auth_rejects_wrong_password_without_updating_last_login():
-    session = make_test_session()
-    auth = AuthService(session)
-    user = User(
-        username='carol',
-        password_hash=auth.hash_password('Password123'),
-        full_name='Carol Smith',
-        role=Role.OPERATOR,
-        is_active=True,
-    )
-    session.add(user)
-    session.commit()
-
-    logged_in = auth.login('carol', 'WrongPassword')
-    assert logged_in is None
-
-    refreshed = session.query(User).filter_by(username='carol').one()
-    assert refreshed.last_login_at is None

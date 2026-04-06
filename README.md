@@ -3,14 +3,14 @@
 AutoExtractOCR is a Windows-first desktop prototype for medical-form OCR workflows.
 
 ## Features
-- Local authentication (Admin / Operator) with hashed passwords (passlib PBKDF2-SHA256)
+
+
+- Local authentication (Admin / Operator) with hashed passwords
 - OCR intake for PNG/JPG/JPEG/PDF
 - OpenCV preprocessing + Tesseract OCR baseline
-- Template-aware extraction strategy (generic + category/template patterns)
 - Editable extracted fields before save
-- Record details update workflow (review/edit/update after save)
 - SQLite storage via SQLAlchemy
-- Category-based record organization and search filters (patient, status, form type, date, record #)
+- Category-based record organization and search filters
 - Audit log tracking + file-based application logging
 - User management (create, activate/deactivate)
 
@@ -39,11 +39,6 @@ pip install -r requirements.txt
 python run.py
 ```
 
-## Run tests
-```bash
-python -m pytest -q
-```
-
 ## Seeded users
 - admin / `Admin@123`
 - operator / `Operator@123`
@@ -59,20 +54,4 @@ Change these credentials immediately in non-demo environments.
 You can package the prototype with PyInstaller:
 ```bash
 pyinstaller --noconfirm --onefile --windowed run.py
-```
-
-## Three-form DB seed example
-```bash
-python scripts/seed_three_forms.py
-```
-
-## Clean-start reset (prototype)
-If you want a complete fresh local start (delete DB, recreate schema, reseed):
-```bash
-python scripts/clean_start_reset.py
-```
-
-Include sample medical forms and clear logs too:
-```bash
-python scripts/clean_start_reset.py --with-sample-forms --remove-logs
 ```

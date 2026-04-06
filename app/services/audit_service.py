@@ -7,19 +7,8 @@ class AuditService:
     def __init__(self, session):
         self.repo = AuditRepository(session)
 
-    def log(
-        self,
-        *,
-        user_id: int | None,
-        action: str,
-        details: str = '',
-        entity_type: str = '',
-        entity_id: str = '',
-        status: str = 'success',
-        auto_commit: bool = False,
-    ) -> None:
+    def log(self, *, user_id: int | None, action: str, details: str = '', entity_type: str = '', entity_id: str = '', status: str = 'success') -> None:
         self.repo.create(
-            auto_commit=auto_commit,
             user_id=user_id,
             action=action,
             action_details=details,

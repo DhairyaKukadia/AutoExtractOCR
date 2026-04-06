@@ -7,8 +7,3 @@ DB_PATH = DATA_DIR / 'autoextractocr.db'
 LOG_DIR = BASE_DIR / 'logs'
 LOG_DIR.mkdir(exist_ok=True)
 APP_LOG_FILE = LOG_DIR / 'app.log'
-
-# OCR / extraction tuning flags
-ENABLE_HANDWRITING_FALLBACK = True
-OCR_MIN_ACCEPTABLE_CONFIDENCE = 55.0
-OCR_DEFAULT_LANG = 'eng'
