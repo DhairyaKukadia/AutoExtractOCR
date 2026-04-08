@@ -1,0 +1,12 @@
+﻿.venv/
+__pycache__/
+*.pyc
+.env
+.idea/
+.vscode/
+*.log
+dist/
+build/
+desktop.ini
+data/*.db
+OCR Master Prompt.docx
