@@ -46,6 +46,7 @@ class RecordDetailsDialog(QDialog):
         layout.addLayout(form)
 
         self.structured = QTextEdit(self._pretty_json(record.extracted_json))
+        self.structured.setReadOnly(True)
         layout.addWidget(self.structured)
 
         self.raw = QTextEdit(record.raw_ocr_text)
