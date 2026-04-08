@@ -17,23 +17,14 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
-from app.config.constants import FORM_CATEGORIES, ReviewStatus
-import app.config.constants as app_constants
+from app.config.constants import FORM_CATEGORIES, OCR_LAYOUT_FIELDS, ReviewStatus
 from app.services.audit_service import AuditService
 from app.services.ocr_service import OCRService
 from app.services.parser_service import ParserService
 from app.services.record_service import RecordService
 from app.utils.file_utils import is_supported_file
 
-FORM_CATEGORY_TO_TABLE = getattr(
-    app_constants,
-    "FORM_CATEGORY_TO_TABLE",
-    {
-        "Laboratory Request Form - Clinical Pathology / Haematology": "pathology_hematology_form",
-        "Clinical Chemistry Laboratory Test Requisition Form": "clinical_chemistry_form",
-        "Blood Request Form": "blood_request_form",
-    },
-)
+FORM_CATEGORY_TO_TABLE = getattr(app_constants, "FORM_CATEGORY_TO_TABLE", {})
 
 
 class OCRPage(QWidget):
@@ -95,37 +86,7 @@ class OCRPage(QWidget):
         right_layout = QVBoxLayout(right_widget)
         right_layout.addWidget(QLabel('Structured Fields'))
         self.form_layout = QFormLayout()
-        right_layout.addLayout(self.form_layout)
-        right_layout.addStretch()
-        splitter.addWidget(right_widget)
-        splitter.setSizes([700, 500])
-
-        root.addWidget(splitter)
-
-    def _configure_shortcuts(self):
-        QShortcut(QKeySequence('Ctrl+O'), self, self._select_file)
-        QShortcut(QKeySequence('Ctrl+R'), self, self._run_ocr)
-        QShortcut(QKeySequence('Return'), self, self._trigger_save_shortcut)
-        QShortcut(QKeySequence('Enter'), self, self._trigger_save_shortcut)
-
-    def _trigger_save_shortcut(self):
-        focused = self.focusWidget()
-        if isinstance(focused, (QLineEdit, QTextEdit)):
-            return
-        self._save()
-
-    def _on_category_changed(self, category: str):
-        self._load_fields_for_category(category)
-        self.has_ocr_result = False
-        self.raw_text.clear()
-        self._update_save_enabled()
-
-    def _load_fields_for_category(self, category: str):
-        while self.form_layout.rowCount() > 0:
-            self.form_layout.removeRow(0)
-        self.field_inputs.clear()
-
-        for key in self.parser_service.fields_for_category(category):
+        for key in OCR_LAYOUT_FIELDS:
             line = QLineEdit()
             self.field_inputs[key] = line
             self.form_layout.addRow(key.replace('_', ' ').title(), line)
@@ -160,17 +121,10 @@ class OCRPage(QWidget):
             self.audit_service.log(user_id=self.current_user.id, action='ocr_execution', details=str(exc), status='failed')
             return
 
-        category = self.category.currentText()
-        mapped = self.parser_service.map_to_structured(text, category)
-        target_table = FORM_CATEGORY_TO_TABLE.get(category)
-        if mapped.get('__target_table') != target_table:
-            QMessageBox.critical(self, 'Mapping error', 'Category is not mapped to a valid schema.')
-            return
-
-        self.raw_text.setPlainText(text)
-        for key, widget in self.field_inputs.items():
-            widget.setText(mapped.get(key, ''))
-
+        self.has_ocr_result = True
+        self.raw_text.setText(text)
+        for key, value in self.extraction_service.parse(text, template_name=self.category.currentText()).items():
+            self.field_inputs[key].setText(value)
         self.status.setCurrentText(ReviewStatus.EXTRACTED.value)
         self.has_ocr_result = True
         self.audit_service.log(user_id=self.current_user.id, action='ocr_execution', details=self.file_path)

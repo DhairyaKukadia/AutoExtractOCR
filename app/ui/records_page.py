@@ -40,11 +40,6 @@ class RecordsPage(QWidget):
         self.status.addItem('')
         self.status.addItems([s.value for s in ReviewStatus])
 
-        self.sort_by = QComboBox()
-        self.sort_by.addItems(['created_at', 'status', 'patient'])
-        self.sort_dir = QComboBox()
-        self.sort_dir.addItems(['desc', 'asc'])
-
         self.patient_name = QLineEdit()
         self.patient_id = QLineEdit()
         self.record_number = QLineEdit()
@@ -114,14 +109,9 @@ class RecordsPage(QWidget):
         filters = self._filters()
         self.total_records = self.repo.count_records(**filters)
         offset = (self.current_page - 1) * self.page_size
-        self.records = self.repo.list_records(
-            **filters,
-            sort_by=self.sort_by.currentText(),
-            sort_desc=self.sort_dir.currentText() == 'desc',
-            limit=self.page_size,
-            offset=offset,
-        )
+        self.records = self.repo.list_records(**filters, limit=self.page_size, offset=offset)
 
+        self.table.setSortingEnabled(False)
         self.table.setRowCount(len(self.records))
         for row, rec in enumerate(self.records):
             self.table.setItem(row, 0, QTableWidgetItem(str(rec.id)))
@@ -129,6 +119,7 @@ class RecordsPage(QWidget):
             self.table.setItem(row, 2, QTableWidgetItem(rec.form_category))
             self.table.setItem(row, 3, QTableWidgetItem(rec.patient_name or ''))
             self.table.setItem(row, 4, QTableWidgetItem(rec.review_status))
+        self.table.setSortingEnabled(True)
 
         total_pages = max(1, (self.total_records + self.page_size - 1) // self.page_size)
         self.page_label.setText(f'Page {self.current_page} / {total_pages} ({self.total_records} records)')

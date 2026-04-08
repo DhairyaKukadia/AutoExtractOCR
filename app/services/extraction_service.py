@@ -1,39 +1,10 @@
 import re
 
 from app.config.constants import FORM_CATEGORY_TO_TYPE
-from app.services.parser_service import ParserService
 
 
 class ExtractionService:
-    def __init__(self):
-        self.parser = ParserService()
-
-    FIELD_ORDER = [
-        'patient_name',
-        'age_sex',
-        'registration_no',
-        'mrd_no',
-        'bbr_no',
-        'ward_unit',
-        'doctor_name',
-        'doctor_contact_no',
-        'sample_or_specimen_type',
-        'form_type',
-        'patient_identifier',
-    ]
-
     def parse(self, text: str, template_name: str | None = None) -> dict[str, str]:
-        if template_name and template_name in FORM_CATEGORY_TO_TYPE:
-            parsed = self.parser.map_to_structured(text, template_name)
-            parsed['form_type'] = FORM_CATEGORY_TO_TYPE.get(template_name, '')
-            parsed['patient_identifier'] = self._first_non_empty(
-                parsed.get('mrd_no', ''),
-                parsed.get('registration_no', ''),
-                parsed.get('bbr_no', ''),
-                parsed.get('patient_name', ''),
-            )
-            return parsed
-
         extracted = {
             'patient_name': self._extract(text, [r"Patient(?:'s)?\s*Name\s*[:\-]\s*(.+)", r'PATIENT\s*NAME\s*[:\-]\s*(.+)']),
             'age_sex': self._extract(text, [r'Age\s*&\s*Sex\s*[:\-]\s*(.+)', r'AGE\s*/\s*GENDER\s*[:\-]\s*(.+)']),
@@ -61,9 +32,7 @@ class ExtractionService:
         if explicit:
             return explicit
         if template_name:
-            normalized = FORM_CATEGORY_TO_TYPE.get(template_name)
-            if normalized:
-                return normalized
+            return template_name
 
         upper = text.upper()
         if 'CLINICAL PATHOLOGY' in upper or 'HAEMATOLOGY' in upper:
