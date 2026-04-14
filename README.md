@@ -5,7 +5,7 @@ AutoExtractOCR is a Windows-first desktop prototype for medical-form OCR workflo
 ## Features
 
 
-- Local authentication (Admin / Operator) with hashed passwords
+- Local authentication (Admin / Operator / Reviewer) with hashed passwords
 - OCR intake for PNG/JPG/JPEG/PDF
 - OpenCV preprocessing + Tesseract OCR baseline
 - Editable extracted fields before save
@@ -42,6 +42,7 @@ python run.py
 ## Seeded users
 - admin / `Admin@123`
 - operator / `Operator@123`
+- reviewer / `Reviewer@123`
 
 Change these credentials immediately in non-demo environments.
 

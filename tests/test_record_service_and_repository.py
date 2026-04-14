@@ -63,12 +63,12 @@ def test_update_record_replaces_field_rows():
         record_id=created.id,
         extracted_fields={'patient_name': 'New', 'patient_identifier': 'ID-2', 'form_type': 'B'},
         raw_ocr_text='new',
-        status='approved',
+        status='extracted',
         reviewed_by=user.id,
     )
 
     assert updated.patient_name == 'New'
-    assert updated.review_status == 'approved'
+    assert updated.review_status == 'extracted'
     assert len(updated.fields) == 3
 
 
@@ -107,3 +107,53 @@ def test_record_repository_filters():
     recent = repo.list_records(date_from=datetime.utcnow() - timedelta(days=1))
     assert len(recent) == 1
     assert recent[0].id != first.id
+
+
+def test_update_record_status_rejects_invalid_transition():
+    session = make_test_session()
+    user = _create_user(session)
+    service = RecordService(session)
+
+    created = service.save_record(
+        form_category='Prescription',
+        source_file_name='file1.png',
+        source_file_path='C:/tmp/file1.png',
+        raw_ocr_text='old',
+        extracted_fields={'patient_name': 'Old', 'patient_identifier': 'ID-1', 'form_type': 'A'},
+        status='draft',
+        created_by=user.id,
+    )
+
+    try:
+        service.update_record_status(created.id, 'approved', reviewed_by=user.id)
+        assert False, 'Expected ValueError for invalid transition'
+    except ValueError as exc:
+        assert 'Invalid status transition' in str(exc)
+
+
+def test_update_record_rejects_invalid_transition():
+    session = make_test_session()
+    user = _create_user(session)
+    service = RecordService(session)
+
+    created = service.save_record(
+        form_category='Prescription',
+        source_file_name='file1.png',
+        source_file_path='C:/tmp/file1.png',
+        raw_ocr_text='old',
+        extracted_fields={'patient_name': 'Old', 'patient_identifier': 'ID-1', 'form_type': 'A'},
+        status='draft',
+        created_by=user.id,
+    )
+
+    try:
+        service.update_record(
+            record_id=created.id,
+            extracted_fields={'patient_name': 'New', 'patient_identifier': 'ID-2', 'form_type': 'B'},
+            raw_ocr_text='new',
+            status='approved',
+            reviewed_by=user.id,
+        )
+        assert False, 'Expected ValueError for invalid transition'
+    except ValueError as exc:
+        assert 'Invalid status transition' in str(exc)
