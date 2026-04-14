@@ -78,7 +78,11 @@ class RecordDetailsDialog(QDialog):
             return
 
         old_status = self.record.review_status
-        self.record = self.record_service.update_record_status(self.record.id, new_status, reviewed_by=self.current_user.id)
+        try:
+            self.record = self.record_service.update_record_status(self.record.id, new_status, reviewed_by=self.current_user.id)
+        except ValueError as exc:
+            QMessageBox.warning(self, 'Invalid status', str(exc))
+            return
         self.audit_service.log(
             user_id=self.current_user.id,
             action='status_update',
